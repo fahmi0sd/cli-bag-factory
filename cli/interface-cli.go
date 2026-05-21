@@ -63,7 +63,7 @@ func login(h *handler.CLIHandler) {
 	if user.Role == "Admin" {
 		menuAdmin(h)
 	} else {
-		menuCustomer(h)
+		menuCustomer(h, user.ID)
 	}
 }
 
@@ -104,7 +104,7 @@ func register(h *handler.CLIHandler) {
 
 // menu customer
 
-func menuCustomer(h *handler.CLIHandler) {
+func menuCustomer(h *handler.CLIHandler, userID int) {
 	for {
 		fmt.Println("\n--- Menu Customer ---")
 		fmt.Println("1. Lengkapi/Update Profil & Alamat")
@@ -120,20 +120,18 @@ func menuCustomer(h *handler.CLIHandler) {
 
 		switch pilih {
 		case 1:
-			updateProfil(h)
+			updateProfil(h, userID)
 		case 2:
-			lihatKatalog(h)
+			h.ViewAllProducts()
 		case 3:
-			buatPesanan(h)
+			buatPesanan(h, userID)
 		case 4:
-			riwayatPesanan(h)
+			h.LihatRiwayat(userID)
 		case 5:
-			batalkanPesanan(h)
+			batalkanPesanan(h, userID)
 		case 6:
 			fmt.Println("Logout berhasil!")
 			return
-		default:
-			fmt.Println("Menu tidak tersedia!")
 		}
 	}
 }
@@ -170,62 +168,45 @@ func menuAdmin(h *handler.CLIHandler) {
 
 // code for feature customer
 
-func updateProfil(h *handler.CLIHandler) {
-	reader.ReadString('\n')
-
+func updateProfil(h *handler.CLIHandler, userID int) {
 	fmt.Println("\n===== UPDATE PROFIL =====")
 
 	fmt.Print("Nama Lengkap : ")
 	nama, _ := reader.ReadString('\n')
-
-	fmt.Print("Alamat : ")
-	alamat, _ := reader.ReadString('\n')
+	nama = strings.TrimSpace(nama)
 
 	fmt.Print("No HP : ")
 	nohp, _ := reader.ReadString('\n')
+	nohp = strings.TrimSpace(nohp)
 
-	fmt.Println("\nProfil berhasil diperbarui!")
-	fmt.Println("Nama   :", strings.TrimSpace(nama))
-	fmt.Println("Alamat :", strings.TrimSpace(alamat))
-	fmt.Println("No HP  :", strings.TrimSpace(nohp))
+	fmt.Print("Alamat : ")
+	alamat, _ := reader.ReadString('\n')
+	alamat = strings.TrimSpace(alamat)
+
+	h.UpdateProfilUser(userID, nama, nohp, alamat)
 }
 
-func lihatKatalog(h *handler.CLIHandler) {
-	fmt.Println("\n===== KATALOG TAS =====")
-	fmt.Println("1. Tas Ransel - Rp150000")
-	fmt.Println("2. Tas Selempang - Rp100000")
-	fmt.Println("3. Tas Laptop - Rp250000")
-}
+func buatPesanan(h *handler.CLIHandler, userID int) {
+	h.ViewAllProducts()
+	var bagID, jumlah int
+	fmt.Print("\nMasukkan ID Produk yang ingin dibeli: ")
+	fmt.Scanln(&bagID)
 
-func buatPesanan(h *handler.CLIHandler) {
-	var pilih int
-	var jumlah int
-
-	lihatKatalog(h)
-
-	fmt.Print("\nPilih produk : ")
-	fmt.Scanln(&pilih)
-
-	fmt.Print("Jumlah beli : ")
+	fmt.Print("Jumlah beli: ")
 	fmt.Scanln(&jumlah)
 
-	fmt.Println("Pesanan berhasil dibuat!")
+	h.BuatPesanan(userID, bagID, jumlah)
 }
 
-func riwayatPesanan(h *handler.CLIHandler) {
-	fmt.Println("\n===== RIWAYAT PESANAN =====")
-	fmt.Println("1. Tas Ransel - Diproses")
-	fmt.Println("2. Tas Laptop - Selesai")
-}
-
-func batalkanPesanan(h *handler.CLIHandler) {
-	var id int
-
+func batalkanPesanan(h *handler.CLIHandler, userID int) {
 	fmt.Println("\n===== BATALKAN PESANAN =====")
-	fmt.Print("Masukkan ID Pesanan : ")
+	h.LihatRiwayat(userID)
+
+	var id int
+	fmt.Print("Masukkan ID Pesanan yang ingin dibatalkan: ")
 	fmt.Scanln(&id)
 
-	fmt.Println("Pesanan berhasil dibatalkan!")
+	h.BatalkanPesananCustomer(userID, id)
 }
 
 // this is code for admin produk
