@@ -28,7 +28,7 @@ func InterfaceCLI(h *handler.CLIHandler) {
 		case 1:
 			login(h)
 		case 2:
-			register()
+			register(h)
 		case 3:
 			fmt.Println("Terima kasih telah menggunakan aplikasi.")
 			return
@@ -41,42 +41,70 @@ func InterfaceCLI(h *handler.CLIHandler) {
 // this is code for login
 
 func login(h *handler.CLIHandler) {
-	var username, password string
-
-	fmt.Print("Username : ")
-	fmt.Scanln(&username)
+	fmt.Println("\n===== LOGIN =====")
+	fmt.Print("Email    : ")
+	email, _ := reader.ReadString('\n')
+	email = strings.TrimSpace(email)
 
 	fmt.Print("Password : ")
-	fmt.Scanln(&password)
+	password, _ := reader.ReadString('\n')
+	password = strings.TrimSpace(password)
 
-	// Login sederhana
-	if username == "admin" && password == "admin" {
-		fmt.Println("Login Admin Berhasil!")
+	// Call function login in hendler
+	user, err := h.Login(email, password)
+	if err != nil {
+		fmt.Println("❌ Gagal Login:", err.Error())
+		return
+	}
+
+	fmt.Printf("✅ Login Berhasil! Selamat datang, %s.\n", user.Email)
+
+	// cek role user
+	if user.Role == "Admin" {
 		menuAdmin(h)
 	} else {
-		fmt.Println("Login Customer Berhasil!")
-		menuCustomer()
+		menuCustomer(h)
 	}
 }
 
 // register
 
-func register() {
-	var username, password string
+func register(h *handler.CLIHandler) {
+	fmt.Println("\n===== REGISTER CUSTOMER BARU =====")
 
-	fmt.Println("===== REGISTER CUSTOMER =====")
-	fmt.Print("Masukkan Username : ")
-	fmt.Scanln(&username)
+	fmt.Print("Masukkan Email : ")
+	email, _ := reader.ReadString('\n')
+	email = strings.TrimSpace(email)
 
 	fmt.Print("Masukkan Password : ")
-	fmt.Scanln(&password)
+	password, _ := reader.ReadString('\n')
+	password = strings.TrimSpace(password)
 
-	fmt.Println("Akun berhasil dibuat!")
+	fmt.Print("Nama Lengkap : ")
+	nama, _ := reader.ReadString('\n')
+	nama = strings.TrimSpace(nama)
+
+	fmt.Print("No HP : ")
+	phone, _ := reader.ReadString('\n')
+	phone = strings.TrimSpace(phone)
+
+	fmt.Print("Alamat Pengiriman : ")
+	alamat, _ := reader.ReadString('\n')
+	alamat = strings.TrimSpace(alamat)
+
+	// Call function Register from handler
+	err := h.RegisterCustomer(email, password, nama, phone, alamat)
+	if err != nil {
+		fmt.Println("❌ Gagal mendaftar:", err)
+		return
+	}
+
+	fmt.Println("✅ Akun berhasil dibuat! Silakan pilih menu Login.")
 }
 
 // menu customer
 
-func menuCustomer() {
+func menuCustomer(h *handler.CLIHandler) {
 	for {
 		fmt.Println("\n--- Menu Customer ---")
 		fmt.Println("1. Lengkapi/Update Profil & Alamat")
@@ -92,15 +120,15 @@ func menuCustomer() {
 
 		switch pilih {
 		case 1:
-			updateProfil()
+			updateProfil(h)
 		case 2:
-			lihatKatalog()
+			lihatKatalog(h)
 		case 3:
-			buatPesanan()
+			buatPesanan(h)
 		case 4:
-			riwayatPesanan()
+			riwayatPesanan(h)
 		case 5:
-			batalkanPesanan()
+			batalkanPesanan(h)
 		case 6:
 			fmt.Println("Logout berhasil!")
 			return
@@ -142,7 +170,7 @@ func menuAdmin(h *handler.CLIHandler) {
 
 // code for feature customer
 
-func updateProfil() {
+func updateProfil(h *handler.CLIHandler) {
 	reader.ReadString('\n')
 
 	fmt.Println("\n===== UPDATE PROFIL =====")
@@ -162,18 +190,18 @@ func updateProfil() {
 	fmt.Println("No HP  :", strings.TrimSpace(nohp))
 }
 
-func lihatKatalog() {
+func lihatKatalog(h *handler.CLIHandler) {
 	fmt.Println("\n===== KATALOG TAS =====")
 	fmt.Println("1. Tas Ransel - Rp150000")
 	fmt.Println("2. Tas Selempang - Rp100000")
 	fmt.Println("3. Tas Laptop - Rp250000")
 }
 
-func buatPesanan() {
+func buatPesanan(h *handler.CLIHandler) {
 	var pilih int
 	var jumlah int
 
-	lihatKatalog()
+	lihatKatalog(h)
 
 	fmt.Print("\nPilih produk : ")
 	fmt.Scanln(&pilih)
@@ -184,13 +212,13 @@ func buatPesanan() {
 	fmt.Println("Pesanan berhasil dibuat!")
 }
 
-func riwayatPesanan() {
+func riwayatPesanan(h *handler.CLIHandler) {
 	fmt.Println("\n===== RIWAYAT PESANAN =====")
 	fmt.Println("1. Tas Ransel - Diproses")
 	fmt.Println("2. Tas Laptop - Selesai")
 }
 
-func batalkanPesanan() {
+func batalkanPesanan(h *handler.CLIHandler) {
 	var id int
 
 	fmt.Println("\n===== BATALKAN PESANAN =====")
