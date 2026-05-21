@@ -1,4 +1,4 @@
-package main
+package cli
 
 import (
 	"bufio"
@@ -9,13 +9,13 @@ import (
 
 var reader = bufio.NewReader(os.Stdin)
 
-func main() {
+func InterfaceCLI() {
 	for {
 		fmt.Println("===========================================")
-		fmt.Println("   SELAMAT DATANG DI PABRIK TAS")
+		fmt.Println("     SELAMAT DATANG DI PABRIK TAS CLI      ")
 		fmt.Println("===========================================")
 		fmt.Println("1. Login")
-		fmt.Println("2. Register (Buat Akun Customer Baru)")
+		fmt.Println("2. Register")
 		fmt.Println("3. Exit")
 		fmt.Print("Pilih menu (1-3): ")
 
@@ -78,10 +78,10 @@ func menuCustomer() {
 	for {
 		fmt.Println("\n--- Menu Customer ---")
 		fmt.Println("1. Lengkapi/Update Profil & Alamat")
-		fmt.Println("2. Lihat Katalog Tas (Read)")
-		fmt.Println("3. Buat Pesanan Baru (Create Order)")
-		fmt.Println("4. Lihat Riwayat Pesanan Saya (Read)")
-		fmt.Println("5. Batalkan Pesanan (Delete/Update Status)")
+		fmt.Println("2. Lihat Katalog Tas")
+		fmt.Println("3. Buat Pesanan Baru")
+		fmt.Println("4. Lihat Riwayat Pesanan Saya")
+		fmt.Println("5. Batalkan Pesanan")
 		fmt.Println("6. Logout")
 		fmt.Print("Pilih menu: ")
 
@@ -113,7 +113,7 @@ func menuCustomer() {
 func menuAdmin() {
 	for {
 		fmt.Println("\n--- Menu Admin Pabrik ---")
-		fmt.Println("1. Kelola Produk Tas (CRUD)")
+		fmt.Println("1. Kelola Produk Tas (Menambah, Mengupdate, Menghapus Produk)")
 		fmt.Println("2. Proses Pesanan Customer (Update Status)")
 		fmt.Println("3. Menu Laporan (Reports)")
 		fmt.Println("4. Logout")
