@@ -5,11 +5,13 @@ import (
 	"fmt"
 	"os"
 	"strings"
+
+	"github.com/fahmi0sd/cli-bag-factory/handler"
 )
 
 var reader = bufio.NewReader(os.Stdin)
 
-func InterfaceCLI() {
+func InterfaceCLI(h *handler.CLIHandler) {
 	for {
 		fmt.Println("===========================================")
 		fmt.Println("     SELAMAT DATANG DI PABRIK TAS CLI      ")
@@ -24,7 +26,7 @@ func InterfaceCLI() {
 
 		switch pilih {
 		case 1:
-			login()
+			login(h)
 		case 2:
 			register()
 		case 3:
@@ -38,7 +40,7 @@ func InterfaceCLI() {
 
 // this is code for login
 
-func login() {
+func login(h *handler.CLIHandler) {
 	var username, password string
 
 	fmt.Print("Username : ")
@@ -50,7 +52,7 @@ func login() {
 	// Login sederhana
 	if username == "admin" && password == "admin" {
 		fmt.Println("Login Admin Berhasil!")
-		menuAdmin()
+		menuAdmin(h)
 	} else {
 		fmt.Println("Login Customer Berhasil!")
 		menuCustomer()
@@ -110,7 +112,7 @@ func menuCustomer() {
 
 // menu admin
 
-func menuAdmin() {
+func menuAdmin(h *handler.CLIHandler) {
 	for {
 		fmt.Println("\n--- Menu Admin Pabrik ---")
 		fmt.Println("1. Kelola Produk Tas (Menambah, Mengupdate, Menghapus Produk)")
@@ -124,11 +126,11 @@ func menuAdmin() {
 
 		switch pilih {
 		case 1:
-			kelolaProduk()
+			kelolaProduk(h)
 		case 2:
-			prosesPesanan()
+			prosesPesanan(h)
 		case 3:
-			menuLaporan()
+			menuLaporan(h)
 		case 4:
 			fmt.Println("Logout berhasil!")
 			return
@@ -200,7 +202,7 @@ func batalkanPesanan() {
 
 // this is code for admin produk
 
-func kelolaProduk() {
+func kelolaProduk(h *handler.CLIHandler) {
 	for {
 		fmt.Println("\n===== KELOLA PRODUK =====")
 		fmt.Println("1. Tambah Produk")
@@ -217,7 +219,7 @@ func kelolaProduk() {
 		case 1:
 			fmt.Println("Tambah Produk")
 		case 2:
-			lihatKatalog()
+			h.ViewAllProducts()
 		case 3:
 			fmt.Println("Update Produk")
 		case 4:
@@ -230,21 +232,23 @@ func kelolaProduk() {
 	}
 }
 
-func prosesPesanan() {
+func prosesPesanan(h *handler.CLIHandler) {
 	fmt.Println("\n===== PROSES PESANAN =====")
-	fmt.Println("1. Pesanan #001 - Diproses")
-	fmt.Println("2. Pesanan #002 - Menunggu")
 
 	var id int
-	fmt.Print("Pilih ID Pesanan : ")
+	var status string
+
+	fmt.Print("Masukkan ID Pesanan : ")
 	fmt.Scanln(&id)
 
-	fmt.Println("Status pesanan berhasil diperbarui!")
+	fmt.Print("Masukkan Status Baru (Diproses/Selesai/Dibatalkan): ")
+	fmt.Scanln(&status)
+
+	h.UpdateOrderStatus(id, status)
 }
 
-func menuLaporan() {
-	fmt.Println("\n===== MENU LAPORAN =====")
-	fmt.Println("Total Pesanan : 10")
-	fmt.Println("Pesanan Selesai : 7")
-	fmt.Println("Pesanan Dibatalkan : 1")
+func menuLaporan(h *handler.CLIHandler) {
+	h.GenerateSalesReport()
+	h.GenerateStockReport()
+	h.GenerateUserReport()
 }
