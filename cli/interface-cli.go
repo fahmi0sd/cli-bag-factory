@@ -13,7 +13,7 @@ var reader = bufio.NewReader(os.Stdin)
 
 func InterfaceCLI(h *handler.CLIHandler) {
 	for {
-		fmt.Println("===========================================")
+		fmt.Println("\n===========================================")
 		fmt.Println("     SELAMAT DATANG DI PABRIK TAS CLI      ")
 		fmt.Println("===========================================")
 		fmt.Println("1. Login")
@@ -226,13 +226,66 @@ func kelolaProduk(h *handler.CLIHandler) {
 
 		switch pilih {
 		case 1:
-			fmt.Println("Tambah Produk")
+			fmt.Println("\n--- Tambah Produk Baru ---")
+			var categoryID, price, stock int
+
+			h.ViewCategories()
+
+			fmt.Print("ID Kategori (1: Daypack, 2: Carrier, 3: Sling Bag) : ")
+			fmt.Scanln(&categoryID)
+
+			fmt.Print("Nama Tas : ")
+			name, _ := reader.ReadString('\n')
+			name = strings.TrimSpace(name)
+
+			fmt.Print("Material : ")
+			material, _ := reader.ReadString('\n')
+			material = strings.TrimSpace(material)
+
+			fmt.Print("Harga (Rp) : ")
+			fmt.Scanln(&price)
+
+			fmt.Print("Stok Awal : ")
+			fmt.Scanln(&stock)
+
+			h.AddProduct(categoryID, name, material, price, stock)
+
 		case 2:
 			h.ViewAllProducts()
+
 		case 3:
-			fmt.Println("Update Produk")
+			h.ViewAllProducts()
+			fmt.Println("\n--- Update Produk ---")
+			var id, price, stock int
+
+			fmt.Print("Masukkan ID Produk yang akan diupdate: ")
+			fmt.Scanln(&id)
+
+			fmt.Print("Nama Tas Baru : ")
+			name, _ := reader.ReadString('\n')
+			name = strings.TrimSpace(name)
+
+			fmt.Print("Material Baru : ")
+			material, _ := reader.ReadString('\n')
+			material = strings.TrimSpace(material)
+
+			fmt.Print("Harga Baru (Rp) : ")
+			fmt.Scanln(&price)
+
+			fmt.Print("Stok Baru : ")
+			fmt.Scanln(&stock)
+
+			h.UpdateProduk(id, name, material, price, stock)
+
 		case 4:
-			fmt.Println("Hapus Produk")
+			h.ViewAllProducts()
+			fmt.Println("\n--- Hapus Produk ---")
+			var id int
+			fmt.Print("Masukkan ID Produk yang akan dihapus: ")
+			fmt.Scanln(&id)
+
+			h.HapusProduk(id)
+
 		case 5:
 			return
 		default:
@@ -243,6 +296,7 @@ func kelolaProduk(h *handler.CLIHandler) {
 
 func prosesPesanan(h *handler.CLIHandler) {
 	fmt.Println("\n===== PROSES PESANAN =====")
+	h.ViewAllOrders()
 
 	var id int
 	var status string
