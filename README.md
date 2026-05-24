@@ -62,3 +62,5 @@ cd handler
 # Jalankan tes dan tampilkan log detail
 go test -v
 ```
+# PPT Bag Factory
+https://docs.google.com/presentation/d/1UyaiOgxB72lDj5eg7msNg5U2BRf0uXYm/edit?slide=id.p7#slide=id.p7
